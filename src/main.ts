@@ -1,15 +1,69 @@
 import './base.css';
 import './style.css';
-import { h, toast, copyText, loadJSON, saveJSON, uid, langToggle, downloadBlob } from './ui';
+import './store.css';
+import { h, toast, copyText, uid, langToggle, downloadBlob } from './ui';
 import { dicts, type Lang, type Dict } from './i18n';
+import { load, persist, isQuotaError, requestPersistence, type Note } from './store';
 
-interface Note { id: string; text: string; pinned: boolean; created: number; updated: number }
 interface State { notes: Note[]; lastId: string | null; lang: Lang; startup: 'last' | 'new' }
 
-const KEY = 'satto-memo:v1';
-const st: State = loadJSON<State>(KEY, { notes: [], lastId: null, lang: 'ja', startup: 'last' });
+const st: State = { notes: [], lastId: null, lang: 'ja', startup: 'last' };
 let t: Dict = dicts[st.lang];
-const save = () => saveJSON(KEY, st);
+
+/** True after a failed save, until a later save succeeds. */
+let saveFailed = false;
+let bannerEl: HTMLElement | null = null;
+
+function hideSaveError() {
+  bannerEl?.remove();
+  bannerEl = null;
+}
+/** Persistent bilingual warning. Typed text stays in memory and on screen. */
+function showSaveError(err: unknown) {
+  const quota = isQuotaError(err);
+  const ja = quota
+    ? '保存できませんでした：端末の保存容量がいっぱいです。入力した文章は消えていません。コピーするかJSONに書き出してから、不要なメモを削除してください。'
+    : '保存できませんでした。入力した文章は消えていません。コピーするかJSONに書き出してください。';
+  const en = quota
+    ? 'Could not save: storage on this device is full. Your text is still here — copy it or export JSON, then delete notes you no longer need.'
+    : 'Could not save. Your text is still here — copy it or export JSON to keep it safe.';
+  hideSaveError();
+  bannerEl = h('div', { class: 'save-error', role: 'alert' },
+    h('p', { lang: 'ja' }, '⚠️ ', ja),
+    h('p', { lang: 'en' }, en),
+    h('div', { class: 'row' },
+      h('button', { class: 'btn', onclick: () => { void save(); } }, '再試行 / Retry'),
+      h('button', { class: 'btn', onclick: async () => {
+        const text = current?.text ?? '';
+        toast((text && (await copyText(text))) ? `${dicts.ja.copied} / ${dicts.en.copied}` : `${dicts.ja.copyFail} / ${dicts.en.copyFail}`);
+      } }, 'コピー / Copy'),
+      h('button', { class: 'btn', onclick: () => { flushToMemory(); exportJSON(); } }, '書き出す / Export'),
+    ),
+  );
+  document.body.prepend(bannerEl);
+  const s = document.getElementById('savestate');
+  if (s) s.textContent = t.unsaved;
+}
+
+function save(): Promise<boolean> {
+  return persist(st.notes, { lastId: st.lastId, lang: st.lang, startup: st.startup }).then(
+    () => {
+      saveFailed = false;
+      hideSaveError();
+      return true;
+    },
+    (err) => {
+      console.error('[satto-memo] save failed', err);
+      saveFailed = true;
+      showSaveError(err);
+      return false;
+    },
+  );
+}
+window.addEventListener('beforeunload', (e) => {
+  if (dirty) flush();
+  if (saveFailed) { e.preventDefault(); e.returnValue = ''; }
+});
 
 const app = document.getElementById('app')!;
 let view: 'edit' | 'list' = 'edit';
@@ -74,9 +128,15 @@ function flush() {
     if (!existing) st.notes.push(c);
     st.lastId = c.id;
   }
-  save();
-  const s = document.getElementById('savestate');
-  if (s) s.textContent = t.saved;
+  void save().then((ok) => {
+    const s = document.getElementById('savestate');
+    if (s && !dirty) s.textContent = ok ? t.saved : t.unsaved;
+  });
+}
+/** Put the current note's text into the in-memory list (used before exporting). */
+function flushToMemory() {
+  const c = current;
+  if (c && c.text.trim() && !st.notes.some((n) => n.id === c.id)) st.notes.push(c);
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
 window.addEventListener('pagehide', flush);
@@ -276,10 +336,26 @@ function render() {
 }
 
 // boot: list is the base history entry, the editor is pushed on top so Android "back" goes to the list.
-document.documentElement.lang = st.lang;
-document.title = t.app;
-history.replaceState({ v: 'list' }, '');
-const last = st.startup === 'last' ? st.notes.find((n) => n.id === st.lastId) ?? null : null;
-current = last ?? newNote();
-history.pushState({ v: 'edit' }, '');
-render();
+async function boot() {
+  try {
+    const data = await load();
+    st.notes = data.notes;
+    st.lastId = data.lastId;
+    st.lang = data.lang;
+    st.startup = data.startup;
+    if (data.migrated) console.info(`[satto-memo] moved ${data.migrated} notes from localStorage to IndexedDB`);
+  } catch (err) {
+    console.error('[satto-memo] load failed', err);
+    showSaveError(err);
+  }
+  t = dicts[st.lang];
+  document.documentElement.lang = st.lang;
+  document.title = t.app;
+  history.replaceState({ v: 'list' }, '');
+  const last = st.startup === 'last' ? st.notes.find((n) => n.id === st.lastId) ?? null : null;
+  current = last ?? newNote();
+  history.pushState({ v: 'edit' }, '');
+  render();
+  void requestPersistence();
+}
+void boot();

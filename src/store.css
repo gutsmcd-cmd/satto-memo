@@ -1,0 +1,12 @@
+.save-error {
+  position: sticky; top: 0; z-index: 50;
+  background: #fff3f0; color: #7a1d12; border-bottom: 2px solid var(--danger);
+  padding: 10px 14px calc(10px); display: flex; flex-direction: column; gap: 6px;
+  font-size: 0.88rem; line-height: 1.45;
+}
+.save-error p { margin: 0; }
+.save-error .row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.save-error .btn { min-height: 36px; padding: 0 12px; font-size: 0.82rem; flex: 1; }
+@media (prefers-color-scheme: dark) {
+  .save-error { background: #3a1712; color: #ffd9d2; }
+}

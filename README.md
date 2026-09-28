@@ -12,11 +12,11 @@
 - JSON で書き出し・読み込み（バックアップ・機種変更用）
 - 表示言語：日本語 / English
 
-メモはこの端末の localStorage にだけ保存され、外部には送信されません。
+メモはこの端末の IndexedDB にだけ保存され、外部には送信されません。以前のバージョンの localStorage のメモは、初回起動時に自動で IndexedDB に移され（書き込みを確認してから localStorage 側を削除）、`navigator.storage.persist()` でブラウザに自動削除しないよう依頼します。保存に失敗した場合（容量不足を含む）は日本語/英語の警告を表示し、入力中の文章は消しません。
 
 ## English
 
-**Satto Memo** is a plain, fast notepad PWA that opens straight to your last note (or a new one). Autosave, note list with search, pinning, delete with undo, copy/share, and JSON export/import for backups. Japanese UI by default with an English toggle. Free, no ads, no login, no network calls; notes stay in localStorage on your device and it works fully offline.
+**Satto Memo** is a plain, fast notepad PWA that opens straight to your last note (or a new one). Autosave, note list with search, pinning, delete with undo, copy/share, and JSON export/import for backups. Japanese UI by default with an English toggle. Free, no ads, no login, no network calls; notes stay in IndexedDB on your device (older localStorage notes are migrated automatically on first load and verified before the old copy is removed; persistent storage is requested so the browser won't evict them; save failures, including quota errors, show a bilingual warning and never drop typed text) and it works fully offline.
 
 ## 開発 / Development
 
