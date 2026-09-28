@@ -1,0 +1,47 @@
+:root { --acc: #e09a00; --acc-ink: #fff; --paper: #fffdf6; }
+@media (prefers-color-scheme: dark) { :root { --paper: #1c1b17; } }
+body { background: var(--paper); }
+.topbar h1 .count { font-size: 0.8rem; font-weight: 700; opacity: 0.85; margin-left: 8px; }
+.list-btn { position: relative; }
+.badge {
+  position: absolute; top: 3px; right: 1px; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 9px; background: #fff; color: var(--acc); font-size: 0.66rem; font-weight: 800;
+  display: grid; place-items: center; line-height: 1;
+}
+.ic { display: inline-grid; place-items: center; }
+.edit-main { padding: 0; gap: 0; }
+.editor {
+  flex: 1; width: 100%; border: 0; resize: none; outline: none; background: transparent; color: var(--ink);
+  padding: 18px 18px 24px; font-size: 1.06rem; line-height: 1.75; min-height: 60vh;
+  background-image: linear-gradient(to bottom, transparent calc(1.75em - 1px), color-mix(in srgb, var(--acc) 14%, transparent) 1px);
+  background-size: 100% 1.75em; background-attachment: local; background-position: 0 18px;
+}
+.edit-bar {
+  position: sticky; bottom: 0; display: flex; align-items: center; gap: 2px;
+  padding: 6px 8px calc(6px + var(--safe-b)) 14px; background: var(--card); border-top: 1px solid var(--line);
+}
+.edit-bar .icon-btn { color: var(--muted); }
+.edit-bar .icon-btn[aria-pressed='true'] { color: var(--acc); }
+.status { display: flex; gap: 10px; }
+.search { border-radius: 999px; padding-left: 18px; }
+.sec { font-size: 0.78rem; letter-spacing: 0.06em; color: var(--muted); margin: 6px 4px 6px; text-transform: uppercase; }
+.notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.note { display: flex; align-items: center; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 4px 4px 0; }
+.note-main { flex: 1; min-width: 0; text-align: left; border: 0; background: transparent; padding: 10px 6px 10px 14px; }
+.note-title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-sub { font-size: 0.82rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-date { color: color-mix(in srgb, var(--acc) 75%, var(--ink)); font-weight: 600; }
+.note .icon-btn { color: var(--muted); width: 38px; height: 38px; }
+.note .icon-btn.on { color: var(--acc); }
+.settings { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+.set-row { display: flex; flex-direction: column; gap: 6px; }
+.set-label { font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+.set-row .row .btn { flex: 1; font-size: 0.9rem; }
+.fab {
+  position: fixed; right: max(18px, calc(50% - 262px)); bottom: calc(22px + var(--safe-b));
+  width: 60px; height: 60px; border-radius: 20px; border: 0; background: var(--acc); color: #fff;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--acc) 45%, transparent); display: grid; place-items: center;
+}
+.fab svg { width: 28px; height: 28px; }
+main { padding-bottom: calc(96px + var(--safe-b)); }
+.edit-main { padding-bottom: 0; }
