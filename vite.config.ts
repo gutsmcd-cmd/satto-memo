@@ -8,7 +8,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
       manifest: {
-        id: './',
+        id: '/satto-memo/',
         name: 'さっとメモ',
         short_name: 'さっとメモ',
         description:
