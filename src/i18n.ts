@@ -38,7 +38,7 @@ const ja = {
 };
 export type Dict = typeof ja;
 const en: Dict = {
-  app: 'Satto Memo',
+  app: 'Quick Memo',
   placeholder: 'Write something…',
   notes: 'Notes',
   newNote: 'New note',
