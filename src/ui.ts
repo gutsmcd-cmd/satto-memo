@@ -1,3 +1,4 @@
+import { bigTextButton } from './bigtext';
 export function h<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   props: Record<string, unknown> = {},
@@ -94,11 +95,19 @@ export function uid(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-export function langToggle(lang: 'ja' | 'en', set: (l: 'ja' | 'en') => void): HTMLElement {
+function langGroup(lang: 'ja' | 'en', set: (l: 'ja' | 'en') => void): HTMLElement {
   return h('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Language' },
     h('button', { 'aria-pressed': String(lang === 'ja'), onclick: () => set('ja') }, '日本語'),
     h('button', { 'aria-pressed': String(lang === 'en'), onclick: () => set('en') }, 'EN'),
   );
+}
+
+/** Language toggle plus the 大きい文字 / Large text switch, side by side. */
+export function langToggle(lang: 'ja' | 'en', set: (l: 'ja' | 'en') => void): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'top-tools';
+  wrap.append(bigTextButton(), langGroup(lang, set));
+  return wrap;
 }
 
 export function downloadBlob(blob: Blob, name: string): void {
