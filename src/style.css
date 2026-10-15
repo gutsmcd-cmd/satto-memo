@@ -45,3 +45,24 @@ body { background: var(--paper); }
 .fab svg { width: 28px; height: 28px; }
 main { padding-bottom: calc(96px + var(--safe-b)); }
 .edit-main { padding-bottom: 0; }
+
+/* Shirley check (Oct 2026): larger text and 48px tap targets for older eyes and fingers. */
+.lang-toggle { font-size: 1rem; }
+.lang-toggle button { min-height: 48px; min-width: 48px; padding: 0 12px; opacity: 1; }
+.icon-btn { width: 48px; height: 48px; }
+label.field, .small, .foot { font-size: 1rem; }
+.seg button { min-height: 48px; font-size: 1rem; color: #55555f; }
+@media (prefers-color-scheme: dark) { .seg button { color: var(--muted); } }
+.btn, .input, select.input { min-height: 48px; }
+.toast button { min-height: 48px; }
+:root { --acc-ink: #1d1d24; }
+.topbar h1 .count, .sec, .note-sub, .set-label, .set-row .row .btn { font-size: 1rem; }
+.badge { background: #1d1d24; color: #fff; font-size: 0.8rem; min-width: 20px; height: 20px; }
+.editor { font-size: 1.15rem; }
+.note .icon-btn { width: 48px; height: 48px; }
+.edit-bar .icon-btn[aria-pressed='true'], .note .icon-btn.on { color: color-mix(in srgb, var(--acc) 55%, #000); }
+.note-date { color: color-mix(in srgb, var(--acc) 50%, var(--ink)); }
+.fab { color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .edit-bar .icon-btn[aria-pressed='true'], .note .icon-btn.on, .note-date { color: var(--acc); }
+}
