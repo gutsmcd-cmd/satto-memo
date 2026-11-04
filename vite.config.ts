@@ -9,8 +9,8 @@ export default defineConfig({
       includeAssets: ['icons/*.png'],
       manifest: {
         id: '/satto-memo/',
-        name: 'さっとメモ',
-        short_name: 'さっとメモ',
+        name: 'Quick Memo',
+        short_name: 'Quick Memo',
         description:
           'すぐ書ける、シンプルなメモ帳。無料・広告なし・ログイン不要・オフライン対応。A quick, simple notepad — free, no ads, no login, offline.',
         lang: 'ja',

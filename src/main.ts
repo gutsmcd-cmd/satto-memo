@@ -82,7 +82,7 @@ const ICON = {
 };
 const icon = (k: keyof typeof ICON) => { const s = h('span', { class: 'ic' }); s.innerHTML = ICON[k]; return s; };
 
-function setLang(l: Lang) { st.lang = l; t = dicts[l]; document.documentElement.lang = l; document.title = t.app; save(); render(); }
+function setLang(l: Lang) { st.lang = l; t = dicts[l]; document.documentElement.lang = l; document.title = 'Quick Memo'; save(); render(); }
 
 function newNote(): Note {
   const n = Date.now();
@@ -350,7 +350,7 @@ async function boot() {
   }
   t = dicts[st.lang];
   document.documentElement.lang = st.lang;
-  document.title = t.app;
+  document.title = 'Quick Memo';
   history.replaceState({ v: 'list' }, '');
   const last = st.startup === 'last' ? st.notes.find((n) => n.id === st.lastId) ?? null : null;
   current = last ?? newNote();
